@@ -21,8 +21,7 @@ bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 client = genai.Client(api_key=GEMINI_API_KEY)
-
-MODEL = "MODEL = "models/gemini-2.0-flash"
+MODEL = "models/gemini-2.0-flash"
 
 
 @dp.message(CommandStart())
