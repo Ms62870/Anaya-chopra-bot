@@ -1,20 +1,12 @@
 import os
 import asyncio
-
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.types import Message
-
 from google import genai
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-if not BOT_TOKEN:
-    raise ValueError("BOT_TOKEN environment variable is missing")
-
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY environment variable is missing")
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
@@ -24,27 +16,19 @@ client = genai.Client(api_key=GEMINI_API_KEY)
 
 @dp.message(CommandStart())
 async def start(message: Message):
-    await message.answer(
-        "👋 Hello! I'm Anaya AI ❤️\n\nAsk me anything."
-    )
+    models = []
 
-
-@dp.message()
-async def chat(message: Message):
     try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash-preview",
-            contents=message.text
-        )
+        for model in client.models.list():
+            models.append(model.name)
 
-        await message.answer(response.text)
+        await message.answer("\n".join(models[:20]))
 
     except Exception as e:
-        await message.answer(f"❌ Error:\n{e}")
+        await message.answer(str(e))
 
 
 async def main():
-    print("Anaya AI Started...")
     await dp.start_polling(bot)
 
 
